@@ -1,0 +1,92 @@
+# ---------------------------------------------------------------
+# Project .gitignore — for projects under 02 - Projects/Work/<Project>
+#
+# Defaults below treat _meta/ as Obsidian-managed working notes:
+#   - AI session logs and meeting notes are NOT committed by default
+#     (they often contain sensitive context). Remove the lines below
+#     to commit them.
+#   - Asset binaries are excluded; markdown attachments still tracked.
+#   - Common dev cruft (node_modules, .env, dist, __pycache__, etc.)
+#     is excluded so this gitignore works whether the repo root is
+#     code, notes, or a mix.
+# ---------------------------------------------------------------
+
+# --- Obsidian / project notes ---
+# Private working notes — AI session transcripts may contain secrets,
+# meeting notes may contain stakeholder-confidential material.
+_meta/AI-Sessions/
+_meta/Meetings/
+
+# Project helper / builder skills — imported per-developer, not shared.
+# These are workflow helpers (kickoff, wrap-up, etc.), NOT project deliverables.
+# If a project's deliverable IS a skill, remove or comment out these lines.
+.claude/skills/
+.agents/skills/
+
+# Asset binaries (uncomment git-lfs config instead if you prefer LFS)
+_meta/Assets/*.png
+_meta/Assets/*.jpg
+_meta/Assets/*.jpeg
+_meta/Assets/*.gif
+_meta/Assets/*.pdf
+_meta/Assets/*.mp4
+_meta/Assets/*.mov
+_meta/Assets/*.zip
+
+# Obsidian local state (vault-level — usually not present in project folders,
+# but ignore defensively in case of nested vaults or copied state)
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json
+.obsidian/cache
+
+# --- Secrets ---
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets.json
+credentials.json
+
+# --- Node ---
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.npm/
+.pnp.*
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# --- Build artifacts ---
+dist/
+build/
+out/
+target/
+*.log
+coverage/
+.nyc_output/
+
+# --- IDE / editor ---
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# --- OS ---
+.DS_Store
+Thumbs.db
+desktop.ini
+$RECYCLE.BIN/

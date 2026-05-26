@@ -1,0 +1,20 @@
+# Python cache (the bootstrappers are pure-stdlib but caches may appear when run)
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# OS-specific junk
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+*~
+
+# Local environment
+.env
+.venv/
+venv/
