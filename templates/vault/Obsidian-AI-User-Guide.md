@@ -282,6 +282,8 @@ The work in the middle is the actual project. /kickoff and /wrap-up bracket it. 
 | **/grill pocock\|brainstorm\|devils-advocate** | Force a specific grilling style regardless of project setting.                        |
 | **/devils-advocate**               | Adversarial review of an existing plan.                                               |
 | **/brainstorm**                    | Divergent exploration when the goal is clear but the approach isn't.                  |
+| **/prune-memory**                  | Quarterly curation of `_meta/AI-Memory.md` — proposes archive/delete/merge candidates from recent sessions. Drafts a diff; nothing written without approval. |
+| **/verify-context**                | Diagnostic — lists which project context files are currently loaded. Use when the agent seems to be guessing at conventions. |
 
 ## Common file locations
 
