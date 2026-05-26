@@ -40,6 +40,7 @@ These are pre-work skills that fire *before* implementation begins. Not included
 | `grill` | Pre-work alignment ritual. Default style is Pocock interrogation; projects can override via a `Grilling style:` note in `_meta/CLAUDE.md`. Pass an optional style argument to force a specific approach: `/grill pocock`, `/grill brainstorm`, `/grill devil`. | `/grill` |
 | `devils-advocate` | Agent argues *against* your plan — strongest case for not doing it. Use when you suspect you're attached to a particular approach and want a genuine counter-position. | `/devils-advocate` |
 | `brainstorm` | Divergent exploration. Generates a spread of approaches before you commit. Use when the goal is clear but the approach isn't. | `/brainstorm` |
+| `verify-context` | Lists the project context files currently loaded in this session, so you can spot if the auto-load chain (root `CLAUDE.md` → `_meta/CLAUDE.md` → stack preset) silently didn't fire. Use when the agent seems to be guessing at conventions. | `/verify-context` |
 
 All skills have `disable-model-invocation: true` set so the agent won't auto-trigger them. You decide when to invoke.
 

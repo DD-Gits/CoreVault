@@ -652,6 +652,89 @@ This is the repository root. Working notes, decisions, AI context, and project m
 }
 
 # ------------------------------------------------------------
+# Verify the auto-load chain
+#
+# Pure file-system checks — no agent involved. Catches the silent
+# failure mode where a missing root CLAUDE.md or a broken
+# @_meta/CLAUDE.md reference causes Claude Code to load nothing
+# and the user only notices when the agent starts guessing at
+# conventions.
+# ------------------------------------------------------------
+
+Write-Host ""
+Write-Host "Verifying auto-load chain..." -ForegroundColor Cyan
+
+$VerifyResults = @()
+
+function Test-AutoLoadCheck {
+    param (
+        [string]$Label,
+        [bool]$Passed,
+        [string]$Detail
+    )
+    $script:VerifyResults += [pscustomobject]@{
+        Label  = $Label
+        Passed = $Passed
+        Detail = $Detail
+    }
+}
+
+$RootClaudePath = Join-Path $ProjectPath "CLAUDE.md"
+$MetaClaudePath = Join-Path $MetaPath "CLAUDE.md"
+$AgentsPath     = Join-Path $ProjectPath "AGENTS.md"
+
+# 1. Root CLAUDE.md exists
+Test-AutoLoadCheck -Label "Root CLAUDE.md exists" `
+    -Passed (Test-Path -Path $RootClaudePath) `
+    -Detail $RootClaudePath
+
+# 2. Root CLAUDE.md contains @_meta/CLAUDE.md reference
+if (Test-Path -Path $RootClaudePath) {
+    $RootClaudeContent = Get-Content -Path $RootClaudePath -Raw -Encoding UTF8
+    $HasMetaRef = $RootClaudeContent -match '(?m)^@_meta/CLAUDE\.md\s*$'
+    Test-AutoLoadCheck -Label "Root CLAUDE.md references @_meta/CLAUDE.md" `
+        -Passed $HasMetaRef `
+        -Detail $(if ($HasMetaRef) { "reference found" } else { "MISSING - Claude Code will not load _meta/CLAUDE.md" })
+} else {
+    Test-AutoLoadCheck -Label "Root CLAUDE.md references @_meta/CLAUDE.md" -Passed $false -Detail "skipped (root CLAUDE.md missing)"
+}
+
+# 3. _meta/CLAUDE.md exists
+Test-AutoLoadCheck -Label "_meta/CLAUDE.md exists" `
+    -Passed (Test-Path -Path $MetaClaudePath) `
+    -Detail $MetaClaudePath
+
+# 4. AGENTS.md exists at project root
+Test-AutoLoadCheck -Label "AGENTS.md exists at project root" `
+    -Passed (Test-Path -Path $AgentsPath) `
+    -Detail $AgentsPath
+
+# Render results
+$AllPassed = $true
+foreach ($r in $VerifyResults) {
+    if ($r.Passed) {
+        Write-Host ("  [OK]   {0}" -f $r.Label) -ForegroundColor Green
+    } else {
+        Write-Host ("  [FAIL] {0} - {1}" -f $r.Label, $r.Detail) -ForegroundColor Red
+        $AllPassed = $false
+    }
+}
+
+if (-not $AllPassed) {
+    if ($RepoMode -eq "Clone") {
+        Write-Host ""
+        Write-Host "Note: in Clone mode, the upstream repo's existing root files are not overwritten." -ForegroundColor Yellow
+        Write-Host "If the upstream repo had its own AGENTS.md or CLAUDE.md, the missing references" -ForegroundColor Yellow
+        Write-Host "above may be intentional. Otherwise, add the @_meta/CLAUDE.md line manually." -ForegroundColor Yellow
+    } else {
+        Write-Host ""
+        Write-Host "Auto-load chain has gaps. Fresh sessions will not auto-load _meta/CLAUDE.md." -ForegroundColor Yellow
+        Write-Host "Fix the failures above before starting work, or run /verify-context in your" -ForegroundColor Yellow
+        Write-Host "first session to confirm what the agent can see." -ForegroundColor Yellow
+    }
+}
+
+# ------------------------------------------------------------
 # Completion message
 # ------------------------------------------------------------
 
