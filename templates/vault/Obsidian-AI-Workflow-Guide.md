@@ -362,7 +362,7 @@ The AI-assisted development ecosystem is full of tools that overlap with parts o
 
 Skills are Claude Code's native mechanism for reusable, named instructions. A skill is a directory containing a SKILL.md file with frontmatter (name, description, disable-model-invocation) and a body that gets sent to the model when the user invokes the matching slash command.
 
-This system ships seven skills, split into two conceptual groups: the four core protocol skills that ship by default in every project, and three optional alignment skills available on demand.
+This system ships nine skills in three conceptual groups: four core protocol skills that ship by default in every project, three optional alignment skills (pre-work), and two optional maintenance skills (curation and diagnosis). The optional groups are available on demand — import them per-project at creation time.
 
 ### Core protocol skills (default in every project)
 
@@ -387,6 +387,14 @@ These three are pre-work skills that fire before implementation begins. They add
   - /brainstorm — divergent exploration before any plan exists. The agent generates a spread of meaningfully different approaches and presents trade-offs. Use when the goal is clear but the approach isn't yet.
 
 The pattern across the alignment skills: they're invoked when the cost of misalignment is high (substantial work, design uncertainty, attachment to a particular approach). For routine work, skip them and proceed directly to implementation.
+
+### Maintenance skills (optional, on demand)
+
+Two skills cover the long-lived-project failure modes — runaway AI-Memory and silent auto-load failures. Like the alignment skills, they're not in the default set; import them when you anticipate needing them, or run them ad hoc from a fully-imported vault.
+
+  - /prune-memory — curation pass over _meta/AI-Memory.md. Reads the file plus recent session logs and proposes entries to archive, delete, or merge based on whether each rule is still load-bearing. Drafts a diff for review; nothing is written without explicit approval. Use quarterly, or whenever AI-Memory crosses ~200 lines and starts becoming its own context cost.
+
+  - /verify-context — diagnostic pass that asks the agent to list which project context files are currently loaded in this session. Catches the silent failure mode where the auto-load chain (project-root CLAUDE.md → _meta/CLAUDE.md → stack preset) didn't fire and the agent is guessing at conventions. Reports loaded / not loaded per file and gives a one-line verdict.
 
 ### Where skills fit in the picture
 
@@ -428,7 +436,7 @@ A common anti-pattern is using MCPs to write project state into external systems
 
 ## Custom skills
 
-The seven skills shipped with the vault cover the load-bearing protocol and the alignment rituals. The skill library at 04 - Resources/AI/Skills/ is where additional skills can live and get imported per-project at creation time. Examples of skills you might add as your workflow matures:
+The nine skills shipped with the vault cover the load-bearing protocol, the alignment rituals, and the long-lived-project maintenance helpers. The skill library at 04 - Resources/AI/Skills/ is where additional skills can live and get imported per-project at creation time. Examples of skills you might add as your workflow matures:
 
   - /resume — continue an in-progress slice rather than starting a new session. Lighter weight than /kickoff.
 

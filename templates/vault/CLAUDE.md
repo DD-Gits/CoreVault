@@ -152,6 +152,12 @@ If the project has helper skills imported (default for new projects via `New-Obs
 - `/handoff` — mid-session context save before continuing in a fresh chat
 - `/new-session-log [topic]` — create a dated session log
 
+Five further skills are available on demand (not in the default set — import via `-Skills All` or `-Skills Custom`):
+
+- `/grill`, `/devils-advocate`, `/brainstorm` — pre-work alignment.
+- `/prune-memory` — quarterly AI-Memory curation.
+- `/verify-context` — diagnostic for silent auto-load failures.
+
 Skills are the invocable counterpart of the paste-able prompts above — same behaviour, different ergonomics. They live at `.claude/skills/` (Claude Code) and `.agents/skills/` (Codex and others). Both are gitignored by default since they're personal workflow helpers, not project deliverables. See [[04 - Resources/AI/Skills/README|the skill library]] for details.
 
 ### Full-kickoff flow

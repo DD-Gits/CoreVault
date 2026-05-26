@@ -30,6 +30,8 @@ See also: [[Vault-Guide#The session loop|Vault-Guide § The session loop]], [[CL
 | Periodic | Promote repeated evaluator findings into AI-Memory | Monthly-ish | n/a |
 | Periodic | Archive completed slices and stale plans | When a milestone ships | [[System/Workflows/Archive-Project|Archive-Project workflow]] |
 | Periodic | `Repair-ObsidianProject.ps1` | When the vault template changes | [[System/Workflows/Repair-Project|Repair-Project workflow]] |
+| Periodic | Curate `_meta/AI-Memory.md` to prevent unbounded growth | Quarterly, or when AI-Memory passes ~200 lines | `/prune-memory` |
+| Diagnostic | List which context files the agent has loaded | When the agent seems to be guessing at conventions | `/verify-context` |
 
 Bold rituals are the load-bearing two. If you only do two things, do those.
 
@@ -246,6 +248,16 @@ These aren't per-session — they're maintenance you do every few weeks, or when
 
 **Skills caveat.** `Repair-ObsidianProject.ps1` adds missing template files; it does not re-import the skill set into the project's `.claude/skills/` or `.agents/skills/`. If the skill library has been updated (e.g. `/handoff` added to the default set), refresh by copying the relevant skill folders manually from `04 - Resources/AI/Skills/<skill>/` into the project's `.claude/skills/` and `.agents/skills/`, or re-run `New-ObsidianProject.ps1` against a throwaway location to see the current default set and copy across.
 
+### `/prune-memory` — curate AI-Memory
+
+**When.** Quarterly, or whenever `_meta/AI-Memory.md` crosses ~200 lines and starts becoming its own context cost.
+
+**What happens.** The agent reads AI-Memory, the AI-Memory-Archive (if it exists), the five most recent session logs, and `_meta/CLAUDE.md`. It walks every entry in AI-Memory and proposes one of: keep, archive (move to `_meta/AI-Memory-Archive.md`), delete (contradicted by newer evidence), or merge (consolidate duplicates). Drafts a diff; nothing is written until you approve.
+
+**Why it matters.** AI-Memory accumulates monotonically without pruning. A 400-line AI-Memory becomes its own context cost — every kickoff pays for entries that are no longer load-bearing. Promotion (via `/wrap-up`) is well-handled by the protocol; demotion isn't. This skill closes the loop.
+
+**Cost of skipping.** AI-Memory grows until it's a wall of text the agent skims rather than reads carefully. Old corrections that are no longer relevant still get attention; real load-bearing rules get diluted.
+
 ---
 
 ## Common failure modes
@@ -253,6 +265,8 @@ These aren't per-session — they're maintenance you do every few weeks, or when
 A few patterns to watch for. Each one is the negative space around a ritual.
 
 **Starting work without kickoff.** Most common failure. Symptom: the agent suggests something you'd already ruled out, or violates a never-do, or describes the project in a way that doesn't match what you're building. Fix: stop, run `/kickoff`, retry.
+
+**Silent auto-load failure.** You ran `/kickoff` (or expected the agent to auto-load), but the agent still seems to be guessing — asking questions `_meta/CLAUDE.md` answers, or proposing approaches that violate stack-level rules from the preset. Symptom: it feels like nothing project-specific was loaded. Fix: run `/verify-context` — it'll list what the agent currently has and tell you whether the chain fired. Common causes are a missing or malformed root `CLAUDE.md` stub, the agent launched outside the project root, or the `@_meta/CLAUDE.md` reference failing to resolve.
 
 **Wrap-up performed but proposals not applied.** Second most common. The agent dutifully proposes AI-Memory and ADR updates; you don't review them; the proposals die with the chat. Fix: treat the wrap-up output as a *to-do for you*, not as a finished artefact. Apply within 24 hours or it won't happen.
 
